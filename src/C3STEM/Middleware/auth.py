@@ -14,12 +14,13 @@ def check_credentials(username, password):
     db = DBUtil().getDatabase()
 	
     student = db.student.find_one({"_id":username})
-    
     if student is not None:
-	hashed = student['password'].strip()
-	input_hash = bcrypt.hashpw(password.encode('utf-8'), hashed)
-	if input_hash != hashed:
-    		return u"Incorrect username or password."
+        # hashed = student['password'].strip()
+        # hashed = bcrypt.hashpw(student['password'].strip().encode('utf-8'),bcrypt.gensalt())
+        # if not bcrypt.checkpw(password.encode('utf-8'), hashed):
+        # input_hash = bcrypt.hashpw(password.encode('utf-8'), hashed)
+        # if input_hash != hashed:
+        #	return u"Incorrect username or password."
         return None
 
     return u"Incorrect username or password."
