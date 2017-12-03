@@ -12,7 +12,7 @@ from junction1_data_nashville import *
 from junction2_data_nashville import *
 from default_problem_data import *
 
-connection = MongoClient(str(os.environ['MONGO_URI']))
+connection = MongoClient(str(os.getenv['MONGO_URI']))
 connection.drop_database('c3stem_database')
 db = connection.c3stem_database
 
