@@ -7,7 +7,7 @@ import os
 import bcrypt
 sys.path.insert(0, '/opt/C3STEM/Middleware')
 
-connection = MongoClient(str(os.environ['MONGO_URI']))
+connection = MongoClient(str(os.getenv['MONGO_URI']))
 db = connection.c3stem_database
 
 with open('/opt/C3STEM/DB/users.csv', 'rb') as f:
