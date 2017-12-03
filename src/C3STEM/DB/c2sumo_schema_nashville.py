@@ -3,6 +3,7 @@ from pymongo import MongoClient
 from datetime import datetime
 import sys
 import bcrypt
+import os
 sys.path.insert(0, '/opt/C3STEM/Middleware')
 from DAO import TrafficLightDAO
 
