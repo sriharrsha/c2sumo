@@ -3,6 +3,7 @@ import pymongo
 from pymongo import MongoClient
 from datetime import datetime
 import sys
+import os
 import bcrypt
 sys.path.insert(0, '/opt/C3STEM/Middleware')
 
