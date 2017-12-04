@@ -10,7 +10,7 @@ sys.path.insert(0, '/opt/C3STEM/Middleware')
 MONGO_HOST = "129.59.107.201"
 MONGO_PORT = 27017
 
-connection = MongoClient(MONGO_HOST, MONGO_PORT)
+connection = MongoClient("mongodb://129.59.107.201:27017")
 db = connection.c3stem_database
 
 with open('/opt/C3STEM/DB/users.csv', 'rb') as f:
