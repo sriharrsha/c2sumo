@@ -1,7 +1,6 @@
 from DBUtil import *
 
-MONGO_HOST = "129.59.107.35"
-MONGO_PORT = 27017
+from Mongodb import *
 
 ##### junction - 202666877
 def createjunction4Data(junction_id):
