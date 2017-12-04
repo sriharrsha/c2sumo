@@ -15,7 +15,7 @@ from junction4_data import *
 MONGO_HOST = "129.59.107.201"
 MONGO_PORT = 27017
 
-connection = MongoClient("mongodb://129.59.107.201:27017")
+connection = MongoClient(MONGO_HOST, MONGO_PORT)
 db = connection.c3stem_database
 
 intersection_id1 = "202601366"
