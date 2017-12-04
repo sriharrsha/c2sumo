@@ -2,8 +2,7 @@ import pymongo
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-MONGO_HOST = "129.59.107.35"
-MONGO_PORT = 27017
+from Mongodb import *
 
 connection = MongoClient(MONGO_HOST, MONGO_PORT)
 db = connection.c3stem_database
