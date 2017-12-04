@@ -1,6 +1,6 @@
 from DBUtil import *
 
-MONGO_HOST = 129.59.107.35
+MONGO_HOST = "129.59.107.35"
 MONGO_PORT = 27017
 
 ##### junction - 202666877
