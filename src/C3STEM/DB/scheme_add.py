@@ -5,7 +5,10 @@ import sys
 sys.path.insert(0, '/opt/C3STEM/Middleware')
 from DAO import TrafficLightDAO
 
-connection = MongoClient()
+MONGO_HOST = 129.59.107.35
+MONGO_PORT = 27017
+
+connection = MongoClient(MONGO_HOST, MONGO_PORT)
 db = connection.c3stem_database
 
 intersection_id1 = "202601366"
