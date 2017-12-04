@@ -11,8 +11,10 @@ from simulation_related import *
 from junction1_data_nashville import *
 from junction2_data_nashville import *
 from default_problem_data import *
+
 MONGO_HOST = 129.59.107.35
 MONGO_PORT = 27017
+
 connection = MongoClient(MONGO_HOST, MONGO_PORT)
 connection.drop_database('c3stem_database')
 db = connection.c3stem_database
