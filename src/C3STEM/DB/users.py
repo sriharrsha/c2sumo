@@ -7,7 +7,7 @@ import os
 import bcrypt
 sys.path.insert(0, '/opt/C3STEM/Middleware')
 
-MONGO_HOST = "129.59.107.201"
+MONGO_HOST = "129.59.107.35"
 MONGO_PORT = 27017
 
 connection = MongoClient(MONGO_HOST, MONGO_PORT)
