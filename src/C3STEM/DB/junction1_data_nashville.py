@@ -5,7 +5,7 @@ from DAO import TrafficLightDAO
 		
 ##### junction - 202305472
 def createjunction1DefaultData(junction_id):
-	connection = MongoClient()
+	connection = MongoClient("mongodb://129.59.107.201:27017")
 	db = connection.c3stem_database
 	db.junction.insert({
 	    "_id": junction_id,
