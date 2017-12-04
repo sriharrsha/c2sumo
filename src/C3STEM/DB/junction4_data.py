@@ -1,8 +1,11 @@
 from DBUtil import *
-		
+
+MONGO_HOST = 129.59.107.35
+MONGO_PORT = 27017
+
 ##### junction - 202666877
 def createjunction4Data(junction_id):
-	connection = MongoClient()
+	connection = MongoClient(MONGO_HOST, MONGO_PORT)
 	db = connection.c3stem_database
 	db.junction.insert({
 	    "_id": junction_id,    
@@ -147,7 +150,7 @@ def createjunction4Data(junction_id):
 	})  
 	
 def createJunction4TurnProbability(junction_id, simulation_id):
-	connection = MongoClient()
+	connection = MongoClient(MONGO_HOST, MONGO_PORT)
 	db = connection.c3stem_database
 	
 	# First intersection
@@ -218,7 +221,7 @@ def createJunction4FlowData(junction_id, simulation_id):
 	#		|		Kwest		|
 	#		|					|
 	#		| G					| F
-	connection = MongoClient()
+	connection = MongoClient(MONGO_HOST, MONGO_PORT)
 	db = connection.c3stem_database
 	db.flows.insert({
 	    "point_name": "Lsouth",
