@@ -151,7 +151,7 @@ def createjunction2DefaultData(junction_id):
 	})  
 	
 def createJunction2DefaultTurnProbability(junction_id, simulation_id):
-	connection = MongoClient()
+	connection = MongoClient(MONGO_HOST, MONGO_PORT)
 	db = connection.c3stem_database
 	
 	# Second intersection
