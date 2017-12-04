@@ -2,10 +2,13 @@ from DBUtil import *
 import sys
 sys.path.insert(0, '/opt/C3STEM/Middleware')
 from DAO import TrafficLightDAO
-		
+
+MONGO_HOST = 129.59.107.201
+MONGO_PORT = 27017
+
 ##### junction - 202305472
 def createjunction1DefaultData(junction_id):
-	connection = MongoClient("mongodb://129.59.107.201:27017")
+	connection = MongoClient(MONGO_HOST, MONGO_PORT)
 	print "Connect database success"
 	db = connection.c3stem_database
 	db.junction.insert({
@@ -149,7 +152,7 @@ def createjunction1DefaultData(junction_id):
 	})  
 	
 def createJunction1DefaultTurnProbability(junction_id, simulation_id):
-	connection = MongoClient()
+	connection = MongoClient(MONGO_HOST, MONGO_PORT)
 	db = connection.c3stem_database
 	
 	# First intersection
@@ -217,7 +220,7 @@ def createJunction1DefaultFlowData(intersection_id1, simulation_id):
 	#		|					|
 	#		| G					| F
 	
-	connection = MongoClient()
+	connection = MongoClient(MONGO_HOST, MONGO_PORT)
 	junction_id = intersection_id1
 	db = connection.c3stem_database
 	db.flows.insert({
