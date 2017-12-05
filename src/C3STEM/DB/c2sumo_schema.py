@@ -12,7 +12,7 @@ from junction2_data import *
 from junction3_data import *
 from junction4_data import *
 
-from Mongodb import *
+import Mongodb
 
 connection = MongoClient(MONGO_HOST, MONGO_PORT)
 db = connection.c3stem_database
