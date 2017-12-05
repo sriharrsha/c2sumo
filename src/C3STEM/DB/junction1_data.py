@@ -1,6 +1,6 @@
 from DBUtil import *
 
-from Mongodb import *
+import Mongodb
 
 ##### junction - 202601366
 def createjunction1Data(junction_id):
