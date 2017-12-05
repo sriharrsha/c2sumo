@@ -2,10 +2,11 @@ import pymongo
 from pymongo import MongoClient
 from datetime import datetime
 import sys
+import os
 sys.path.insert(0, '/opt/C3STEM/Middleware')
 from DAO import TrafficLightDAO
 
-connection = MongoClient()
+connection = MongoClient(os.getenv('MONGO_URI'))
 db = connection.c3stem_database
 
 intersection_id1 = "202601366"

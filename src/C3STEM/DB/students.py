@@ -1,8 +1,9 @@
 import pymongo
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+import os
 
-connection = MongoClient()
+connection = MongoClient(os.getenv('MONGO_URI'))
 db = connection.c3stem_database
 
 db.student.insert({

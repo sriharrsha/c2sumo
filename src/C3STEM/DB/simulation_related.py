@@ -2,6 +2,7 @@ from datetime import datetime
 from bson.objectid import ObjectId
 from DBUtil import *
 from DAO import TrafficLightDAO
+import os
 
 def createGroupSimData(group_id, master_grp_id, latitude, longitude, mode, default_prob, junction_id_list, sim_id_list=None):	
 	db = DBUtil().getDatabase()

@@ -1,8 +1,9 @@
 from DBUtil import *
+import os
 		
 ##### junction - 202662093
 def createjunction2Data(junction_id):
-	connection = MongoClient()
+	connection = MongoClient(os.getenv('MONGO_URI'))
 	db = connection.c3stem_database
 	db.junction.insert({
 	    "_id": junction_id,    
@@ -147,7 +148,7 @@ def createjunction2Data(junction_id):
 	})  
 	
 def createJunction2TurnProbability(junction_id, simulation_id):
-	connection = MongoClient()
+	connection = MongoClient(os.getenv('MONGO_URI'))
 	db = connection.c3stem_database
 	
 	# First intersection
@@ -218,7 +219,7 @@ def createJunction2FlowData(intersection_id2, simulation_id):
 	#		|		Kwest		|
 	#		|					|
 	#		| G					| F
-	connection = MongoClient()
+	connection = MongoClient(os.getenv('MONGO_URI'))
 	db = connection.c3stem_database
 	db.flows.insert({
 	    "point_name": "Iwest",

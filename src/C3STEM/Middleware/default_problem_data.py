@@ -2,7 +2,7 @@ from DBUtil import *
 from SimulationBackupInterface import *
 
 def createDefaultVehicleData(simulation_id):
-	connection = MongoClient()
+	connection = MongoClient(os.getenv('MONGO_URI'))
 	db = connection.c3stem_database
 	db.vehicle.insert({
 		"simulation_id": simulation_id, 
