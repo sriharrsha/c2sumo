@@ -3,7 +3,7 @@ import sys
 sys.path.insert(0, '/opt/C3STEM/Middleware')
 from DAO import TrafficLightDAO
 
-from Mongodb import *
+import Mongodb
 
 ##### junction - 202305472
 def createjunction1DefaultData(junction_id):
