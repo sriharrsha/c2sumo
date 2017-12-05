@@ -5,7 +5,7 @@ import sys
 sys.path.insert(0, '/opt/C3STEM/Middleware')
 from DAO import TrafficLightDAO
 
-from Mongodb import *
+import Mongodb
 
 connection = MongoClient(MONGO_HOST, MONGO_PORT)
 db = connection.c3stem_database
