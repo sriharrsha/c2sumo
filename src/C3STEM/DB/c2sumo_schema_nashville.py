@@ -11,8 +11,7 @@ from simulation_related import *
 from junction1_data_nashville import *
 from junction2_data_nashville import *
 from default_problem_data import *
-
-from Mongodb import *
+import Mongodb
 
 connection = MongoClient(MONGO_HOST, MONGO_PORT)
 connection.drop_database('c3stem_database')
