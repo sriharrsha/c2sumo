@@ -1,7 +1,7 @@
 from DBUtil import *
 from SimulationBackupInterface import *
 
-from Mongodb import *
+import Mongodb
 
 def createDefaultVehicleData(simulation_id):
 	connection = MongoClient(MONGO_HOST, MONGO_PORT)
