@@ -13,9 +13,6 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
-     <script src="https://openlayers.org/en/v4.6.0/build/ol.js" type="text/javascript"></script>
-     <link rel="stylesheet" href="https://openlayers.org/en/v4.6.0/css/ol.css" type="text/css">
-
   <script type="text/javascript" src="Tools/jqGrid-4.6.0/js/i18n/grid.locale-en.js"></script>
   <script type="text/javascript" src="Tools/jqGrid-4.6.0/js/jquery.jqGrid.min.js"></script>
   <script type="text/javascript" src="Tools/spin.min.js"></script>
@@ -70,7 +67,7 @@
         function createMarker(id, latlng, infohtml, icn) {
             if (!this.markersArray[id]) {
                 this.markersArray[id] = [];
-                this.markersArray[id][0] = new ol.Overlay({
+                this.markersArray[id][0] = new google.maps.Marker({
                     position: latlng,
                     map: map,
                     zIndex: Math.round(latlng.lat() * -100000) << 5,
@@ -413,7 +410,7 @@
 				}
 				var lat = parseFloat(stopSigns[i].getAttribute("lat"));
 				var lng = parseFloat(stopSigns[i].getAttribute("lng"));
-				var loc = ol.proj.fromLonLat([lng, lat])
+				var loc = new google.maps.LatLng(lat, lng);
 				var icon = "/static/Images/stop.png";
 
 				containingClass.createStopSign(stopSignId, loc, "", icon);
@@ -506,43 +503,45 @@
             }
 
 
-            this.map = new ol.Map({
-                    controls: ol.control.defaults({
-                      attributionOptions: {
-                        collapsible: false
-                      }
-                    }).extend([
-                      new ol.control.ZoomToExtent({
-                        extent: [
-                          813079.7791264898, 5929220.284081122,
-                          848966.9639063801, 5936863.986909639
-                        ]
-                      })
-                    ]),
-                    layers: [
-                      new ol.layer.Tile({
-                        source: new ol.source.OSM()
-                      })
-                    ],
-                    target: 'map',
-                    view: new ol.View({
-                      center: [lng, lat],
-                      zoom: 20
-                    })
-                  });
+            var mapOptions = {
+                center: new google.maps.LatLng(lat, lng),
+                mapTypeId: google.maps.MapTypeId.SATELLITE,
+                zoom: 20,
+                mapTypeControl: true,
+                mapTypeControlOptions: {
+                    style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+                    position: google.maps.ControlPosition.TOP_RIGHT
+                },
+                panControl: true,
+                panControlOptions: {
+                    position: google.maps.ControlPosition.RIGHT_TOP
+                },
+                zoomControl: true,
+                zoomControlOptions: {
+                    style: google.maps.ZoomControlStyle.LARGE,
+                    position: google.maps.ControlPosition.RIGHT_TOP
+                },
+                scaleControl: true,
+                scaleControlOptions: {
+                    position: google.maps.ControlPosition.RIGHT_BOTTOM
+                },
+                streetViewControl: true,
+                streetViewControlOptions: {
+                    position: google.maps.ControlPosition.RIGHT_TOP
+                }
+            };
+            this.map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
             // create the speed signs on map
             //$("#hdnSpeedSignId").val("speedsign_0");
 
             //this.createMarker("speedsign_0", new google.maps.LatLng(36.138915, -86.812), document.getElementById("infoWindowCustom"), "./Images/speed_40.png");
-            this.map.on("click", function(evt) {
-                var coord = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
-                var lon = coord[0];
-                var lat = coord[1];
+
+            google.maps.event.addListener(this.map, "rightclick", function (event) {
+                var lat = event.latLng.lat();
+                var lng = event.latLng.lng();
                 alert("lat=\"" + lat + "\" lng=\"" + lng + "\"")
             });
-
-
 
 			// update here with intersection type
 			updateIntersection(intersectionType);
@@ -586,23 +585,15 @@
                         iconImage = "https://www.google.com/mapfiles/south.png"
                     }
 
-                    var marker=new ol.Feature({
-                        type: type,
-                        geometry: new ol.geom.Point(detectorLoc),
+                    var marker = new google.maps.Marker({
+                        position: detectorLoc,
+                        map: map,
+                        zIndex: Math.round(detectorLoc.lat() * -100000) << 5,
+                        icon: iconImage,
                         title: idparts[0]
-                      });
-
-                    var mstyle=new ol.style.Style({
-                      image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-                          anchor: [detectorLoc.longitude(), detectorLoc.latitude()],
-                          anchorXUnits: 'fraction',
-                          anchorYUnits: 'pixels',
-                          src: iconImage
-                        })),
-                      zIndex: Math.round(detectorLoc.lat() * -100000) << 5
                     });
-                    marker.setStyle(mstyle);
 
+                    marker.type = type;
                     google.maps.event.addListener(marker, 'click', function (event) {
                         $("#inductionLoopDialog").dialog('option', 'title', marker.title);
                         drawInductionLoopWindow(detectorId, marker.type);
