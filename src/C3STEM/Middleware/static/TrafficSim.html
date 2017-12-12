@@ -8,6 +8,12 @@
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.2/themes/cupertino/jquery-ui.css" />
   <link rel="stylesheet" type="text/css" media="screen" href="Tools/jqGrid-4.6.0/css/ui.jqgrid.css" />
 
+<style>
+.ui-widget{
+  z-index:1000;
+}
+</style>
+
   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAc6WbHRRh5N7_g1lBzkatUZ138uMuI5io&amp;sensor=false"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
@@ -22,6 +28,15 @@
 
     <script type="text/javascript" src="Scripts/XmlUtils.js"></script>
     <script type="text/javascript" src="Scripts/Traffic.js"></script>
+
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+    integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
+    crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+    integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+    crossorigin=""></script>
+
+
     <script type="text/javascript">
         // Holds all markers on the map
         isRunning = false;
@@ -67,38 +82,32 @@
         function createMarker(id, latlng, infohtml, icn) {
             if (!this.markersArray[id]) {
                 this.markersArray[id] = [];
-                this.markersArray[id][0] = new google.maps.Marker({
-                    position: latlng,
-                    map: map,
-                    zIndex: Math.round(latlng.lat() * -100000) << 5,
-                    icon: icn
+                var marker = L.icon({
+                    iconUrl: icn,
+
+                    iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+                    shadowAnchor: [4, 62],  // the same for the shadow
+                    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
                 });
 
-                this.markersArray[id][1] = this.bindInfoWindow(this.markersArray[id][0], this.map, infohtml);
-            }
-
-            if (latlng != "") {
-                this.markersArray[id][0].setPosition(latlng);
-            }
-
-            if (icn != "") {
-                this.markersArray[id][0].setIcon(icn);
-            }
+                L.marker([lat, lng], {icon: marker}).addTo(this.map).bindPopup(infohtml);
+              }
         }
 
-        function createFlowPoints(id, latlng, infohtml, icn, point_name, intersection_id) {
+        function createFlowPoints(id, lat, lng, infohtml, icn, point_name, intersection_id) {
           if (!this.flowPointsArray[id]) {
             this.flowPointsArray[id] = [];
-            this.flowPointsArray[id][0] = new google.maps.Marker({
-              position: latlng,
-              map: map,
-              zIndex: Math.round(latlng.lat() * -100000) << 5,
-              icon: icn
+
+            var flowpoint = L.icon({
+                iconUrl: icn,
+                iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+                shadowAnchor: [4, 62],  // the same for the shadow
+                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
             });
 
-            //this.flowPointsArray[id][1] = this.bindInfoWindow(this.flowPointsArray[id][0], this.map, infohtml);
+            L.marker([lat, lng], {icon: flowpoint}).addTo(this.map).bindPopup(infohtml).on('click', onFlowClick);
 
-            google.maps.event.addListener(flowPointsArray[id][0], 'click', function (event) {
+            function onFlowClick(event){
               $("#defineFlow").load('/static/Flows.html', function () {
                 $("#defineFlow").dialog('option', 'title', "Point " + point_name.substring(0, 1));
                 $("#txt_point_name").val(point_name);
@@ -109,63 +118,60 @@
                 }
                 $("#defineFlow").dialog("open");
               });
-            });
+            }
+
+            //this.flowPointsArray[id][1] = this.bindInfoWindow(this.flowPointsArray[id][0], this.map, infohtml);
+
+          //  google.maps.event.addListener(flowPointsArray[id][0], 'click', function (event) {
+          //    $("#defineFlow").load('/static/Flows.html', function () {
+          //      $("#defineFlow").dialog('option', 'title', "Point " + point_name.substring(0, 1));
+          //      $("#txt_point_name").val(point_name);
+          //      $("#getFlowForm").submit();
+                // In collaboration mode disable update button of others intersections
+          //      if ($("#hdnAssociatedJunctions").val().indexOf(intersection_id) == -1) {
+          //        $("#defineFlow_UpdateButton").hide(); //.prop('disabled', true);
+          //      }
+          //      $("#defineFlow").dialog("open");
+          //    });
+          //  });
 
           }
         }
 
+
+
          // A function to create the marker and set up the event window function
-		function createStopSign(id, latlng, infohtml, icn) {
+		function createStopSign(id, lat, lng, infohtml, icn) {
 		            if (!this.stopSignArray[id]) {
 		                this.stopSignArray[id] = [];
-		                this.stopSignArray[id][0] = new google.maps.Marker({
-		                    position: latlng,
-		                    map: map,
-		                    zIndex: Math.round(latlng.lat() * -100000) << 5,
-		                    icon: icn
-		                });
+                    var stopsign = L.icon({
+                        iconUrl: icn,
+                        iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+                        shadowAnchor: [4, 62],  // the same for the shadow
+                        popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+                    });
 
-		                this.stopSignArray[id][1] = this.bindInfoWindow(this.stopSignArray[id][0], this.map, infohtml);
+                    L.marker([lat, lng], {icon: stopsign}).addTo(this.map).bindPopup(infohtml);
 		            }
         }
 
 
          // A function to create the marker and set up the event window function
-        function createVehicleMarker(id, latlng, infohtml, icn) {
+        function createVehicleMarker(id, lat,lng, infohtml, icn) {
             if (!this.vehiclesArray[id]) {
                 this.vehiclesArray[id] = [];
-                this.vehiclesArray[id][0] = new google.maps.Marker({
-                    position: latlng,
-                    map: map,
-                    zIndex: Math.round(latlng.lat() * -100000) << 5,
-                    icon: icn
+
+                var vehicle = L.icon({
+                    iconUrl: icn,
+                    iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+                    shadowAnchor: [4, 62],  // the same for the shadow
+                    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
                 });
 
-                this.vehiclesArray[id][1] = this.bindInfoWindow(this.vehiclesArray[id][0], this.map, infohtml);
-            }
-
-            this.vehiclesArray[id][2] = counter;
-
-            if (latlng != "") {
-                this.vehiclesArray[id][0].setPosition(latlng);
-            }
-
-            if (icn != "") {
-                this.vehiclesArray[id][0].setIcon(icn);
+                L.marker([lat, lng], {icon: vehicle}).addTo(this.map).bindPopup(infohtml);
             }
         }
 
-        function bindInfoWindow(marker, map, html) {
-            var infowindow = new google.maps.InfoWindow({
-                size: new google.maps.Size(150, 50)
-            });
-
-            google.maps.event.addListener(marker, 'click', function () {
-                infowindow.setContent(html);
-                infowindow.open(map, marker);
-            });
-            return infowindow;
-        }
 
          // Check whetwer a key exist in hashtable
         function hasItem(key) {
@@ -185,7 +191,7 @@
         }
 
         function createTrafficSignal(trafficLightId, imageId, trafficLightLinkIndex,
-            trafficLightLoc, title, intersectionId, trafficLightState, presentFolder, intersectionTitleName) {
+            trafficLightLat,trafficLightLng, title, intersectionId, trafficLightState, presentFolder, intersectionTitleName) {
             var turnColor;
             var trafficLightColor = "#FFFFFF";
             var iconColorName = "";
@@ -225,46 +231,43 @@
                     fillColor: trafficLightColor,
                     fillOpacity: 4,
                     map: map,
-                    center: trafficLightLoc,
+                    center: [trafficLightLat,trafficLightLng],
                     radius: 1,
                     clickable: true
                 };
+
+                var circle = L.circle([trafficLightLat, trafficLightLng], {
+                        color: 'red',
+                        fillColor: '#f03',
+                        fillOpacity: 0.5,
+                        radius: 500
+                    }).addTo(this.map);
                 //var tlight = new google.maps.Circle(populationOptions);
 
-                var tlight = new google.maps.Marker({
-                    position: trafficLightLoc,
-                    map: map,
-                    zIndex: Math.round(trafficLightLoc.lat() * -100000) << 5,
-                    //icon: "/static/Images/" + iconColorName + "0" + imageId + ".png",
-					icon: "/static/Images/" +  imageId + "_" + iconColorName + "_s.gif",
-                    title: "Traffic Light "
+                var tlight=L.icon({
+                    iconUrl: "/static/Images/" +  imageId + "_" + iconColorName + "_s.gif",
+                    iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+                    shadowAnchor: [4, 62],  // the same for the shadow
+                    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
                 });
-                //this.trafficSignalIconArray[trafficLightId] = signalIcon;
 
                 // In collaboration mode, show the rest of the intersections but disable clicking
                 if ($("#hdnAssociatedJunctions").val().indexOf(intersectionId) != -1) {
-                  google.maps.event.addListener(tlight, 'click', function (event) {
-                    $("#defineTrafficLight").load('/static/TrafficLight.html', function () {
-                      $("#defineTrafficLight").dialog('option', 'title', intersectionTitleName);
-                      $("#txt_intersection_id").val(intersectionId);
-                      $("#txt_light_index").val(trafficLightLinkIndex);
-                      $("#defineTrafficLight").dialog("open");
-                      loadTrafficLights(presentFolder);
-                    });
-                  });
+                    L.marker([trafficLightLat,trafficLightLng], {icon: tlight}).addTo(this.map).bindPopup(infohtml).on('click', onSignalClick);
+                }else{
+                    L.marker([trafficLightLat,trafficLightLng], {icon: tlight}).addTo(this.map).bindPopup(infohtml)
                 }
-                this.trafficSignalArray[trafficLightId] = tlight;
-            } else {
-                /*var tlight = this.trafficSignalArray[trafficLightId];
-                var populationOptions = {
-                    fillColor: trafficLightColor,
-                    strokeColor: turnColor
-                };
-                tlight.setOptions(populationOptions);*/
 
-                var tlight = this.trafficSignalArray[trafficLightId];
-                //signalIcon.setIcon("/static/Images/" + iconColorName + "0" + imageId + ".png");
-				        tlight.setIcon("/static/Images/" +  imageId + "_" + iconColorName + "_s.gif");
+
+                                function onSignalClick(event){
+                                  $("#defineTrafficLight").load('/static/TrafficLight.html', function () {
+                                    $("#defineTrafficLight").dialog('option', 'title', intersectionTitleName);
+                                    $("#txt_intersection_id").val(intersectionId);
+                                    $("#txt_light_index").val(trafficLightLinkIndex);
+                                    $("#defineTrafficLight").dialog("open");
+                                    loadTrafficLights(presentFolder);
+                                  });
+                                }
             }
         }
 
@@ -296,7 +299,6 @@
                 var vehId = vehicles[i].getAttribute("id");
                 var vehLat = parseFloat(vehicles[i].getAttribute("lat"));
                 var vehLng = parseFloat(vehicles[i].getAttribute("lng"));
-                var vehLoc = new google.maps.LatLng(vehLat, vehLng);
                 var type = vehicles[i].getAttribute("type");
                 var icon = "/static/Images/car.png";
 
@@ -309,20 +311,8 @@
                     break;
                 }
                 // create the vehicles on map
-                this.createVehicleMarker(vehId, vehLoc, "", icon);
+                this.createVehicleMarker(vehId, vehLat,vehLng, " ", icon);
             }
-
-            tempArray = [];
-            $.extend(tempArray, this.vehiclesArray);
-
-            for (var id in tempArray) {
-                if (tempArray[id][2] != this.counter) {
-                    this.vehiclesArray[id][0].setMap(null);
-                    delete this.vehiclesArray[id];
-                }
-            }
-            this.counter++;
-
         }
 
         function updateIntersection(intersectionType) {
@@ -385,9 +375,8 @@
                 var trafficLightLinkIndex = trafficLights[i].getAttribute("link_index");
                 var trafficLightLat = parseFloat(trafficLights[i].getAttribute("lat"));
                 var trafficLightLng = parseFloat(trafficLights[i].getAttribute("lng"));
-                var trafficLightLoc = new google.maps.LatLng(trafficLightLat, trafficLightLng);
 
-                containingClass.createTrafficSignal(trafficLightId, imageId, trafficLightLinkIndex, trafficLightLoc,
+                containingClass.createTrafficSignal(trafficLightId, imageId, trafficLightLinkIndex, trafficLightLat, trafficLightLng,
                     trafficLightName, intersectionId, trafficLightState, dataFolder, intersectionTitleName);
             });
 
@@ -410,10 +399,9 @@
 				}
 				var lat = parseFloat(stopSigns[i].getAttribute("lat"));
 				var lng = parseFloat(stopSigns[i].getAttribute("lng"));
-				var loc = new google.maps.LatLng(lat, lng);
 				var icon = "/static/Images/stop.png";
 
-				containingClass.createStopSign(stopSignId, loc, "", icon);
+				containingClass.createStopSign(stopSignId, lat, lng, "", icon);
             });
         }
 
@@ -503,48 +491,32 @@
             }
 
 
-            var mapOptions = {
-                center: new google.maps.LatLng(lat, lng),
-                mapTypeId: google.maps.MapTypeId.SATELLITE,
-                zoom: 20,
-                mapTypeControl: true,
-                mapTypeControlOptions: {
-                    style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-                    position: google.maps.ControlPosition.TOP_RIGHT
-                },
-                panControl: true,
-                panControlOptions: {
-                    position: google.maps.ControlPosition.RIGHT_TOP
-                },
-                zoomControl: true,
-                zoomControlOptions: {
-                    style: google.maps.ZoomControlStyle.LARGE,
-                    position: google.maps.ControlPosition.RIGHT_TOP
-                },
-                scaleControl: true,
-                scaleControlOptions: {
-                    position: google.maps.ControlPosition.RIGHT_BOTTOM
-                },
-                streetViewControl: true,
-                streetViewControlOptions: {
-                    position: google.maps.ControlPosition.RIGHT_TOP
-                }
-            };
-            this.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+            this.map = L.map('map').setView([lat, lng], 28);
+
+            L.control.zoom({position:'topright'}).addTo(this.map);
+
+            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(this.map);
 
             // create the speed signs on map
             //$("#hdnSpeedSignId").val("speedsign_0");
 
             //this.createMarker("speedsign_0", new google.maps.LatLng(36.138915, -86.812), document.getElementById("infoWindowCustom"), "./Images/speed_40.png");
 
-            google.maps.event.addListener(this.map, "rightclick", function (event) {
-                var lat = event.latLng.lat();
-                var lng = event.latLng.lng();
-                alert("lat=\"" + lat + "\" lng=\"" + lng + "\"")
+          this.map.addEventListener('dblclick', function(ev) {
+               lat = ev.latlng.lat;
+               lng = ev.latlng.lng;
+                 alert("lat=\"" + lat + "\" lng=\"" + lng + "\"")
             });
 
 			// update here with intersection type
-			updateIntersection(intersectionType);
+        map.on('load', function(ev) {
+        console.log("Loaded Leaflet Open Street Map");
+        });
+        updateIntersection(intersectionType);
+
 
             downloadUrl("/static/Data/DetectorData.xml?r=" + Math.random(), function (doc) {
                 this.DetectorDataXml = xmlParse(doc);
@@ -561,7 +533,6 @@
                     var detectorLat = parseFloat(detectors[i].getAttribute("lat"));
                     var detectorLng = parseFloat(detectors[i].getAttribute("lng"));
                     var type = detectors[i].getAttribute("type");
-                    var detectorLoc = new google.maps.LatLng(detectorLat, detectorLng);
 
 
                     var iconImage;
@@ -585,34 +556,32 @@
                         iconImage = "https://www.google.com/mapfiles/south.png"
                     }
 
-                    var marker = new google.maps.Marker({
-                        position: detectorLoc,
-                        map: map,
-                        zIndex: Math.round(detectorLoc.lat() * -100000) << 5,
-                        icon: iconImage,
-                        title: idparts[0]
-                    });
+                    var marker = L.icon({
+                          iconUrl: iconImage,
 
-                    marker.type = type;
-                    google.maps.event.addListener(marker, 'click', function (event) {
-                        $("#inductionLoopDialog").dialog('option', 'title', marker.title);
-                        drawInductionLoopWindow(detectorId, marker.type);
-                        $("#inductionLoopDialog").dialog("open");
-                    });
+                          iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+                          shadowAnchor: [4, 62],  // the same for the shadow
+                          popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+                      });
+                      L.marker([detectorLat, detectorLng], {icon: marker}).addTo(map).bindPopup("").addEventListener('click', function(ev) {
+                            $("#inductionLoopDialog").dialog('option', 'title', idparts[0]);
+                            drawInductionLoopWindow(detectorId, type);
+                            $("#inductionLoopDialog").dialog("open");
+                        });
 
+                      //If it is Collaboration
                     if (idparts[2] != "no-id") {
                       if ($("#hdnAssociatedJunctions").val().indexOf(intersectionId) != -1) {
-                        google.maps.event.addListener(marker, 'rightclick', function (event) {
-                          $("#defineTurnProbability").load('/static/TurnProbability.html', function () {
-                            $("#defineTurnProbability").dialog('option', 'title', idparts[0]);
-                            $("#txt_edge_id").val(idparts[2]);
-                            $("#getTurnProbabilityForm").submit();
-                            $("#defineTurnProbability").dialog("open");
-                          });
-                        });
-                      }
+                                L.marker([detectorLat, detectorLng], {icon: marker}).addTo(map).bindPopup("").addEventListener('click', function(ev) {
+                                  $("#defineTurnProbability").load('/static/TurnProbability.html', function () {
+                                  $("#defineTurnProbability").dialog('option', 'title', idparts[0]);
+                                  $("#txt_edge_id").val(idparts[2]);
+                                  $("#getTurnProbabilityForm").submit();
+                                  $("#defineTurnProbability").dialog("open");
+                              });
+                      })
                     }
-
+                  }
                 });
             });
 
@@ -994,10 +963,9 @@
               var flow_latitude = parseFloat(flow["latitude"]);
               var flow_longitude = parseFloat(flow["longitude"]);
               var flow_rate = flow["flow_rate"];
-              var flow_location = new google.maps.LatLng(flow_latitude, flow_longitude);
               var icn = "https://maps.google.com/mapfiles/marker" + point_name.substring(0, 1) + ".png";
 
-              containingClass.createFlowPoints(flow_id, flow_location, "", icn, point_name, intersection_id);
+              containingClass.createFlowPoints(flow_id, flow_latitude, flow_longitude, " ", icn, point_name, intersection_id);
 
               /*var marker = new google.maps.Marker({
                 position: flow_location,
@@ -1433,7 +1401,7 @@
 
             $("#defineFlowsTrigger5").click(function () {
                 $("#defineFlow").load('/static/Flows.html', function () {
-                    map.setCenter(new google.maps.LatLng(36.14252314419553, -86.80477559566498));
+                    map.setCenter(new google.maps.LatLng(36.14252314415053, -86.80477555066498));
                     $("#defineFlow").dialog('option', 'title', "24th Ave - Highland Ave");
                     $("#txt_edge_id").val("19479457#1");
                     $("#getFlowForm").submit();
@@ -1643,7 +1611,7 @@
 </head>
 
 <body>
-    <div id="map" style="width: 100%; height: 100%;">
+    <div id="map" style="width: 100%; height: 100%;" >
     </div>
     <!--<div class="Toolbar">
         <table border="0" cellpadding="0" cellspacing="0" style="width: 440px; height: 33px; margin-left: auto; margin-right: auto;" class="CommonTable">
@@ -1681,12 +1649,13 @@
             </tr>
         </table>
     </div>-->
-    <div id="LeftMenuTopPanel" class="MenuPanel">
+
+    <div id="LeftMenuTopPanel" class="MenuPanel" style="z-index:1000">
         <button id="btnHideShowButton" class="HideShowButton">Time : 000000</button>
         <button id="btnProblemID" class="ProblemIDButton"></button>
     </div>
-    <div id="LeftMenuBottomPanel">
-        <div id="Accordion" class="AccordionMenu">
+    <div id="LeftMenuBottomPanel" style="z-index:10000">
+        <div id="Accordion" class="AccordionMenu" style="z-index:10000">
       <h4>
         1- Experiment Mode</h4>
             <div>
